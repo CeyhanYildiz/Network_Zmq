@@ -6,7 +6,6 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
-
 #ifndef _WIN32
 #else
 #include <windows.h>
@@ -60,8 +59,6 @@ void recv_joke(const string& joke_type) {
 
             // Add a delay of 1 second (adjust as needed)
             sleep(1);
-        } else {
-            // Handle receive failure if needed
         }
     }
 }
@@ -74,7 +71,6 @@ int main() {
     for (const auto& joke_type : joke_types) {
         threads.emplace_back(recv_joke, joke_type);
     }
-
     for (auto& thread : threads) {
         thread.join();
     }
