@@ -6,72 +6,78 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+
 #ifndef _WIN32
-#include <unistd.h>
 #else
 #include <windows.h>
 #define sleep(n)    Sleep(n)
 #endif
 
-zmq::context_t context(1);
+using namespace std;
+using namespace zmq;
 
-std::string get_random_mum_joke() {
-    std::ifstream file("yourmum.txt");
-    if (!file.is_open()) {
-        std::cerr << "Error: Failed to open file yourmum.txt" << std::endl;
-        return "No jokes available";
-    }
+context_t context(1);
 
-    std::vector<std::string> jokes;
-    std::string line;
-    while (std::getline(file, line)) {
+string get_random_joke(const string& joke_type) {
+    string filename = "yourmum_" + joke_type + ".txt";
+    ifstream file(filename);
+
+    vector<string> jokes;
+    string line;
+    while (getline(file, line)) {
         jokes.push_back(line);
     }
     file.close();
-
-    if (jokes.empty()) {
-        std::cerr << "Error: No jokes found in the file" << std::endl;
-        return "No jokes available";
-    }
 
     srand(time(0)); // Seed the random number generator
     int index = rand() % jokes.size();
     return jokes[index];
 }
 
-void recv_yourmum() {
-    std::cout << "TEST_yourmum" << std::endl;
+void recv_joke(const string& joke_type) {
+    cout << joke_type << " jokes are Live" << endl;
 
-    zmq::socket_t subscriber_yourmum(context, ZMQ_SUB);
-    zmq::socket_t ventilator_yourmum(context, ZMQ_PUSH);
+    socket_t subscriber(context, ZMQ_SUB);
+    socket_t ventilator(context, ZMQ_PUSH);
 
-    subscriber_yourmum.connect("tcp://benternet.pxl-ea-ict.be:24042");
-    ventilator_yourmum.connect("tcp://benternet.pxl-ea-ict.be:24041");
+    subscriber.connect("tcp://benternet.pxl-ea-ict.be:24042");
+    ventilator.connect("tcp://benternet.pxl-ea-ict.be:24041");
 
-    subscriber_yourmum.setsockopt(ZMQ_SUBSCRIBE, "YourMum?>", 10);
+    string subscribe_topic = "YourMum?>" + joke_type + ">";
+    subscriber.set(sockopt::subscribe, subscribe_topic.c_str());
 
     while (true) {
-        zmq::message_t msgr;
-        subscriber_yourmum.recv(&msgr);
+        message_t msg;
+        if (subscriber.recv(msg, recv_flags::none)) {
+            string received_msg(static_cast<char*>(msg.data()), msg.size());
+            cout << "Received: [" << received_msg << "]" << endl;
 
-        std::string received_msg(static_cast<char*>(msgr.data()), msgr.size());
-        std::cout << "Received: [" << received_msg << "]" << std::endl;
+            string joke = get_random_joke(joke_type);
+            string final_message = "YourMum!>" + joke_type + "> " + joke;
 
-        std::string joke = get_random_mum_joke();
-        std::string final_message = "YourMum!> " + joke;
+            message_t msgtosend(final_message.data(), final_message.size(), nullptr);
+            ventilator.send(msgtosend, send_flags::none);
 
-        zmq::message_t msgtosend(final_message.size());
-        memcpy(msgtosend.data(), final_message.data(), final_message.size());
-        ventilator_yourmum.send(msgtosend);
-
-        // Add a delay of 1 second (adjust as needed)
-        sleep(1);
+            // Add a delay of 1 second (adjust as needed)
+            sleep(1);
+        } else {
+            // Handle receive failure if needed
+        }
     }
 }
 
+
 int main() {
-    std::thread first(recv_yourmum);
-    first.join();
+    vector<string> joke_types = {"Dum", "Ugly", "Fat" , "Random"};
+    vector<thread> threads;
+
+    for (const auto& joke_type : joke_types) {
+        threads.emplace_back(recv_joke, joke_type);
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+    }
 
     return 0;
 }
