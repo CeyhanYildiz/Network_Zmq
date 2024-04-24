@@ -1,5 +1,55 @@
 # Network_Zmq
 
+## Info
+
+Can't find a good movie to watch? 
+
+Don't worry about it with these servers. You can easily ask what you want to watch, choose up to 18 genres, and even specify a year if you want. It will give you a random movie or show depending on whether you used PickMovie or PickShow.
+
+## Movies
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant PickMovie
+
+    activate Client
+    activate PickMovie
+    Client-->>+PickMovie: PickMovie?Year:2021>Genre:Horror> (up to 18 genres)
+    PickMovie-->>+Client: PickMovie!TheBlackPhone>
+```
+## Shows
+```mermaid
+sequenceDiagram
+    participant Client
+    participant PickShow
+
+    activate Client
+    activate PickShow
+    Client-->>+PickShow: PickShow?year:2017>Genres:Drama> (up to 18 genres)
+    PickShow-->>+Client: PickShow!TheGoodDoctor>
+```
+# Movie Genre
+
+1. Action 
+2. Adventure 
+3. Animation
+4. Comedy 
+5. Crime 
+6. Drama
+7. Fantasy 
+8. Historical 
+9. Horror
+10. Musical 
+11. Mystery 
+12. Romance
+13. Science Fiction 
+14. Thriller 
+15. War
+16. Documentary 
+17. Family
+18. Sports
+
 
 ## Setting up ZeroMQ (ZMQ) in a QT Project with MinGW
 
