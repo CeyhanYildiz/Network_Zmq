@@ -7,8 +7,8 @@
 
 1. **Copy Folders**:
    - Make a copy of the 'include' folder and the 'lib' folder provided in the github.
-   - [include](https://github.com/CeyhanYildiz/Network_Zmq/include)
-   - [lib](https://github.com/CeyhanYildiz/Network_Zmq/lib)
+   - [include](https://github.com/CeyhanYildiz/Network_Zmq/tree/main/include)
+   - [lib](https://github.com/CeyhanYildiz/Network_Zmq/tree/main/lib)
 
 2. **Create a QT Project**:
    - Open QT Creator and create a new project.
