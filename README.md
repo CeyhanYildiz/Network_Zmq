@@ -13,7 +13,7 @@ sequenceDiagram
     participant Client
     participant PickMovie
 
-    Client->>+PickMovie: PickMovieUsername?KingKong0071234Koe1234
+    Client->>+PickMovie: PickMovieUsername?KingKong007 1234Koe1234
     activate Client
     activate PickMovie
     PickMovie->>+Client: PickMovieUsername!K******07:created
