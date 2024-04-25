@@ -1,11 +1,12 @@
 # Network_Zmq
 
+
 ## Info
 
 Can't find a good movie to watch? 
 
 Don't worry about it with these servers. You can easily ask what you want to watch, choose up to 18 genres, and even specify a year if you want. It will give you a random movie or show depending on whether you used PickMovie or PickShow.
-
+# Client side
 ## Movies
 
 ```mermaid
@@ -28,6 +29,23 @@ sequenceDiagram
     activate PickShow
     Client-->>+PickShow: PickShow?year:2017>Genres:Drama> (up to 18 genres)
     PickShow-->>+Client: PickShow!TheGoodDoctor>
+```
+
+# Server side
+```mermaid
+
+graph TD;
+    A[Receive PickMovie?Year:2021>Genre:Horror] --> B{Valid Request?};
+    B -->|Yes| C[Extract Year and Genre];
+    B -->|No| D[Send Error Response];
+    C --> E[Search Database];
+    E --> F{Movies Found?};
+    F -->|Yes| G[Select Random Movie];
+    F -->|No| H[Send No Movies Found Response];
+    G --> I[Send Selected Movie];
+    H --> I;
+    D --> I;
+
 ```
 # Movie Genre
 
