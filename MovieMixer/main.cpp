@@ -29,23 +29,12 @@ void handleUser(const string& username, const string& password, socket_t& subscr
     // You can add your handling logic here
 }
 
-void receiveMessages(socket_t& subscriber, socket_t& pusher) {
+void receiveMessages(socket_t& subscriber) {
     while (true) {
         message_t msg;
         if (subscriber.recv(msg, zmq::recv_flags::none)) {
             string received_msg(static_cast<char*>(msg.data()), msg.size());
-            cout << "Received message: " << received_msg << endl;
-
-            // Extract username and password from the received message
-            string username = received_msg.substr(9, 17); // Assuming the username is always 17 characters starting from index 9
-            string password = received_msg.substr(26, 12); // Assuming the password is always 12 characters starting from index 26
-
-            // Create a reply message
-            string replyMessage = "Replying to " + username + "'s message.";
-
-            // Push the reply message to the user
-            message_t reply(replyMessage.begin(), replyMessage.end());
-            pusher.send(reply, zmq::send_flags::none);
+            cout << "Received message: " << received_msg << endl; // Add this line for debugging
         } else {
             cerr << "Error receiving message" << endl;
         }
@@ -76,7 +65,7 @@ int main() {
         unordered_set<string> previousUsernames;
 
         // Start a thread to receive messages
-        thread receiveThread(receiveMessages, ref(subscriber), ref(pusher));
+        thread receiveThread(receiveMessages, ref(subscriber));
 
         while (true) {
             // Print a message indicating that it's scanning

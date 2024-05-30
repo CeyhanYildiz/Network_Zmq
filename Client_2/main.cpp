@@ -64,7 +64,6 @@ int main() {
 
             socket_t subscriber(context, ZMQ_SUB);
             subscriber.connect(endpoint);
-            // Subscribe to the specific topic
             subscriber.set(sockopt::subscribe, "PickMovieKingKong0071234Koe1234!");
             subscribers.push_back(move(subscriber));
         }
@@ -76,8 +75,8 @@ int main() {
         }
 
         // Create a single thread for sending messages
-        string message = "PickMovieKingKong0071234Koe1234?Horror"; // Change the message content as needed
-        thread sendThread(sendMessage, ref(ventilators[0]), message, 2000); // Send every 2 second
+        string message = "PickMovieKingKong0071234Koe1234?Horror";
+        thread sendThread(sendMessage, ref(ventilators[0]), message, 2000); // Send every 1 second
 
         // Join sendThread to prevent the main function from exiting
         sendThread.join();

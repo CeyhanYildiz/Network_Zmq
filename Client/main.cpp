@@ -38,6 +38,7 @@ void receiveMessage(socket_t& socket, const string& filter) {
         }
     }
 }
+
 int main() {
     try {
         context_t context(1);
@@ -50,8 +51,8 @@ int main() {
         };
 
         // Define username and password
-        string username = "PickMovieKingKong0071234Koe1234";
-        string genre = "Horror"; // Specify the movie genre
+        string username = "KingKong007";
+        string password = "1234Koe1234";
 
         // Create and connect sockets for each endpoint
         vector<socket_t> ventilators;
@@ -63,18 +64,18 @@ int main() {
 
             socket_t subscriber(context, ZMQ_SUB);
             subscriber.connect(endpoint);
-            subscriber.set(sockopt::subscribe, username + "?>");
+            subscriber.set(sockopt::subscribe, "PickMovieUsername!>");
             subscribers.push_back(move(subscriber));
         }
 
         // Threads for receiving messages for each endpoint
         vector<thread> receiveThreads;
         for (size_t i = 0; i < endpoints.size(); ++i) {
-            receiveThreads.emplace_back(receiveMessage, ref(subscribers[i]), username + "?>");
+            receiveThreads.emplace_back(receiveMessage, ref(subscribers[i]), "PickMovieUsername!>");
         }
 
         // Create a single thread for sending messages
-        string message = "PickMovieUsername?>" + username + "?>:" + genre; // Modify the message to include the genre
+        string message = "PickMovieUsername?>" + username + " " + password + ">";
         thread sendThread(sendMessage, ref(ventilators[0]), message, 1000); // Send every 1 second
 
         // Join sendThread to prevent the main function from exiting
@@ -92,4 +93,3 @@ int main() {
 
     return 0;
 }
-
